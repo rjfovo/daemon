@@ -21,26 +21,88 @@
 #define APPMANAGER_H
 
 #include <QObject>
-#include <QApt/Backend>
-#include <QApt/Transaction>
+#include <QProcess>
 
 class AppManager : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "com.cutefish.AppManager")
 
 public:
     explicit AppManager(QObject *parent = nullptr);
+    ~AppManager();
 
-    void uninstall(const QString &content);
+public Q_SLOTS:
+    /**
+     * @brief 卸载应用程序
+     * @param content 应用程序文件路径或包名
+     */
+    Q_SCRIPTABLE void uninstall(const QString &content);
+
+private Q_SLOTS:
+    /**
+     * @brief 解析包名完成后的处理
+     */
+    void onPackageNameResolved(int exitCode, QProcess::ExitStatus exitStatus);
+    
+    /**
+     * @brief 卸载过程完成后的处理
+     */
+    void onUninstallFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    
+    /**
+     * @brief 自动清理依赖完成后的处理
+     */
+    void onAutoRemoveFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    
+    /**
+     * @brief 处理进程错误
+     */
+    void onProcessError(QProcess::ProcessError error);
 
 private:
+    /**
+     * @brief 根据文件路径获取包名
+     * @param filePath 应用程序文件路径
+     */
+    void getPackageNameFromFile(const QString &filePath);
+    
+    /**
+     * @brief 开始卸载包
+     * @param packageName 包名
+     */
+    void startUninstall(const QString &packageName);
+    
+    /**
+     * @brief 运行自动清理未使用的依赖
+     */
+    void runAutoRemove();
+    
+    /**
+     * @brief 清理当前进程
+     */
+    void cleanupProcess();
+    
+    /**
+     * @brief 发送正在卸载的通知
+     * @param packageName 包名
+     */
     void notifyUninstalling(const QString &packageName);
+    
+    /**
+     * @brief 发送卸载失败的通知
+     * @param packageName 包名
+     */
     void notifyUninstallFailure(const QString &packageName);
+    
+    /**
+     * @brief 发送卸载成功的通知
+     * @param packageName 包名
+     */
     void notifyUninstallSuccess(const QString &packageName);
 
 private:
-    QApt::Backend *m_backend;
-    QApt::Transaction *m_trans;
+    QProcess *m_currentProcess;  // 当前正在运行的进程
 };
 
 #endif // APPMANAGER_H
