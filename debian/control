@@ -3,26 +3,25 @@ Section: devel
 Priority: optional
 Maintainer: CutefishOS <support@cutefishos.com>
 Build-Depends: 
-		cmake,
-		libqapt-dev,
-		qtbase5-dev,
-		qtdeclarative5-dev,
-		qtquickcontrols2-5-dev,
-		debhelper (>= 9)
+        cmake (>= 3.21),
+        debhelper (>= 9),
+        qt6-base-dev,
+        qt6-declarative-dev,
+        qt6-tools-dev
 Standards-Version: 4.6.0
 Homepage: http://cutefishos.com
 Rules-Requires-Root: no
 
 Package: cutefish-daemon
 Architecture: any
-Depends: qml-module-qtquick-controls2,
-         qml-module-qtquick2,
-         qml-module-qtquick-layouts,
-         qml-module-qt-labs-platform,
-         qml-module-qt-labs-settings,
-         qml-module-qtqml,
-         qml-module-qtquick-window2,
-         qml-module-qtquick-shapes,
+Depends: qml6-module-qtquick-controls2,
+         qml6-module-qtquick2,
+         qml6-module-qtquick-layouts,
+         qml6-module-qt-labs-platform,
+         qml6-module-qt-labs-settings,
+         qml6-module-qtqml,
+         qml6-module-qtquick-window2,
+         qml6-module-qtquick-shapes,
          ${misc:Depends},
          ${shlibs:Depends}
 Description: CutefishOS Daemon.
